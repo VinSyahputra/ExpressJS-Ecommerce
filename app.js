@@ -2,33 +2,27 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const errorController = require('./controllers/error');
 
-const rootDir = require('./utils/path');
 
 app.set('view engine', 'pug');
 app.set('views', 'views');
 
 
-const adminData = require('./routes/admin');
-const shopRoute = require('./routes/shop');
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
-// app.use((req, res, next)=>{
-//     console.log('ini seperti __construct di php');
-// next();
-// })
 
 // app.use digunakan untuk semua method di http (get,post,patch,del,...)
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // controller /admin
-app.use('/admin',adminData.routes);
-app.use(shopRoute);
+app.use('/admin',adminRoutes);
+app.use(shopRoutes);
 
 //return 404 status
-app.use('/', (req, res, next) => {
-    res.status(404).render('404');
-});
+app.use(errorController.get404);
 
 // server.listen(3000);
 app.listen(3000, () => {
